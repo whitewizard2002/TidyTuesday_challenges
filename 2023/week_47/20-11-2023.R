@@ -1,0 +1,51 @@
+#Loading required files or installing it
+# install.packages("tidytuesdayR")
+# install.packages("readr")
+# install.packages("tidyverse")
+
+library("readr")
+library("tidyverse")
+
+#loading the dataset directly from github
+rladies_chapters <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-11-21/rladies_chapters.csv')
+
+#generating the histogram for the no of meetings held in each year
+year_vec <- unique(rladies_chapters$year) #for knowing the number of years
+year_vec <- rev(year_vec) # for organising for line graph
+year_splits <- split(rladies_chapters,rladies_chapters$year) #splitting the data based on year values
+
+len<-length(year_splits)
+count<-vector(mode="integer") # an empty vector for representing count of no of meetings in each year
+start<-1 #for giving the starting for count vector
+
+for(i in year_splits){
+  count[start]=nrow(i)
+  start<-start+1
+}
+
+#plotting the no of meetings held in each year
+x <- year_vec
+y <- count
+plot(x,y,type='l',lwd='3',col="red",main="total meetings",xlab="year",ylab="no of meetings")
+
+#splitting furthur into online and offline meetings
+online_count <- vector(mode="integer") # denoting no of meetings in each which were online
+offline_count <- vector(mode="integer") # denoting no of meetings in each year which were offline or "in person"
+
+start <- 1 #adjusting the index
+for(i in year_splits){
+  temp_online_count <- nrow(filter(i,i$location=="online"))
+  temp_offline_count<- nrow(filter(i,i$location=="inperson"))
+  online_count[start]=temp_online_count
+  offline_count[start]=temp_offline_count
+  start<- start+1
+}
+
+#plotting the line graph for online meetings
+lines(x,online_count,type='l',lwd="2",col="blue")
+
+#plotting the line graph for in person meetings
+lines(x,offline_count,type='l',lwd='1',col="green")
+
+#providing the legend for each line graph
+legend("topleft",legend=c("Total","online","inperson"),col=c("red","blue","green"),lty=1)
