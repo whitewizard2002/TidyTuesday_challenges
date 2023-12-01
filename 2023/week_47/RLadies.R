@@ -49,3 +49,6 @@ lines(x,offline_count,type='l',lwd='1',col="green")
 
 #providing the legend for each line graph
 legend("topleft",legend=c("Total","online","inperson"),col=c("red","blue","green"),lty=1)
+
+no_of_loc=length(unique(rladies_chapters$chapter))
+
